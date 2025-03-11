@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using UrlShortenerApi.Data;
-using UrlShortenerApi.Models;
+using UrlShortenerApi.Models.Domain;
+using UrlShortenerApi.Models.DTO;
 
 namespace UrlShortenerApi.Controllers
 {
@@ -50,7 +51,9 @@ namespace UrlShortenerApi.Controllers
       _context.Urls.Add(shortUrl);
       await _context.SaveChangesAsync();
 
-      return Ok(shortCode);
+      var shortUrlDto = new ShortUrlDto() { ShortCode = shortCode };
+
+      return Ok(shortUrlDto);
     }
 
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -66,7 +69,9 @@ namespace UrlShortenerApi.Controllers
       urlEntry.ClickCount++;
       await _context.SaveChangesAsync();
 
-      return Ok(new { url = urlEntry.OriginalUrl });
+      var originalUrlDto = new OriginalUrlDto() { OriginalUrl = urlEntry.OriginalUrl };
+
+      return Ok(originalUrlDto);
     }
 
     // Generate Short Code using MD5 Hash of the counter

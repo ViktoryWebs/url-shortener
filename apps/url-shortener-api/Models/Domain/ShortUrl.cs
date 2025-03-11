@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace UrlShortenerApi.Models
+namespace UrlShortenerApi.Models.Domain
 {
   public class ShortUrl
   {

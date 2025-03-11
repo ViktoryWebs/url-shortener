@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using UrlShortenerApi.Models;
+using UrlShortenerApi.Models.Domain;
 
 namespace UrlShortenerApi.Data
 {
