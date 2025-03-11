@@ -12,7 +12,6 @@ namespace UrlShortenerApi.Controllers
   public class UrlController : ControllerBase
   {
     private readonly UrlShortenerDbContext _context;
-    private static long count = 1L;
 
     public UrlController(UrlShortenerDbContext context)
     {
@@ -29,14 +28,19 @@ namespace UrlShortenerApi.Controllers
         return BadRequest("URL cannot be empty");
       }
 
-      string pattern = @"^https?://(?:[a-zA-Z0-9.-]+(?:\\.[a-zA-Z]{2,}))(?:\\/[^\\s]*)?$";
-      Regex regex = new Regex(pattern);
-      if (!regex.IsMatch(originalUrl))
+      if (!IsValidUrl(originalUrl))
       {
         return BadRequest("URL is invalid");
       }
 
-      string shortCode = GenerateShortCode();
+      var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == originalUrl);
+      if (existingUrl != null)
+      {
+          return Ok(existingUrl.ShortCode);
+      }
+
+      long urlCount = await _context.Urls.CountAsync() + 1;
+      string shortCode = GenerateShortCode(urlCount);
       ShortUrl shortUrl = new()
       {
         OriginalUrl = originalUrl,
@@ -65,12 +69,20 @@ namespace UrlShortenerApi.Controllers
       return Ok(new { url = urlEntry.OriginalUrl });
     }
 
-    private static string GenerateShortCode()
-    {          
+    // Generate Short Code using MD5 Hash of the counter
+    private static string GenerateShortCode(long count)
+    {
       byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(count.ToString());
       byte[] hashBytes = MD5.HashData(inputBytes);
-      
-      return Convert.ToHexString(hashBytes)[..7];
+
+      return Convert.ToHexString(hashBytes)[..7]; // Take first 7 chars
+    }
+
+    // URL Validation
+    private static bool IsValidUrl(string url)
+    {
+      string pattern = @"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/\S*)?$";
+      return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
     }
   }
 }
