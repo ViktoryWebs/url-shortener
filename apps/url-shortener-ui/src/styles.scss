@@ -1,1 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+@use "tailwindcss";
+@use "tailwindcss/utilities";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+body {
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  @apply
+    bg-orange-100
+    dark:bg-gray-900
+    dark:text-white;
+}
+
+.container {
+  @apply mx-auto px-5;
+}
+
+button {
+  @apply
+    px-4
+    py-2
+    rounded-lg
+    cursor-pointer
+    hover:bg-white/30
+    active:bg-white/50
+}
+
+.icon-btn {
+  @apply flex items-center p-2;
+}
+
+.flat-btn-primary {
+  @apply
+    bg-orange-400
+    text-white
+    hover:bg-orange-500
+    active:bg-orange-600;
+}
+
+.stroked-btn-primary {
+  @apply
+    border
+    border-orange-500
+    text-orange-500
+    hover:bg-orange-500
+    hover:text-white
+    active:bg-orange-600;
+}
+
+.form-control {
+  @apply
+    p-3
+    my-2
+    border
+    rounded-lg
+    border-gray-400
+    hover:bg-gray-100
+    focus:outline-2
+    focus:outline-orange-300
+    focus:border-orange-300;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow p-5;
+}

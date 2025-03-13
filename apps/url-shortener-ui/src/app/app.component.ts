@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { HeaderComponent } from './shared/header.component';
+import { UrlShortenerComponent } from './pages/url-shortener.component';
 
 @Component({
-  imports: [NxWelcomeComponent, RouterModule],
+  imports: [RouterModule, HeaderComponent, UrlShortenerComponent],
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  template: `
+    <app-header></app-header>
+    <div class="container mt-4">
+      <app-url-shortener></app-url-shortener>
+      <router-outlet></router-outlet>
+    </div>
+  `,
 })
 export class AppComponent {
   title = 'url-shortener-ui';
