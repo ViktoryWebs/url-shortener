@@ -8,7 +8,7 @@ import { UrlShortenerComponent } from './pages/url-shortener.component';
   selector: 'app-root',
   template: `
     <app-header></app-header>
-    <div class="container mt-4">
+    <div class="container my-5">
       <app-url-shortener></app-url-shortener>
       <router-outlet></router-outlet>
     </div>
