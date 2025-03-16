@@ -13,7 +13,7 @@ body {
 }
 
 .container {
-  @apply mx-auto px-5;
+  @apply mx-auto md:px-5 ;
 }
 
 .nav-bar {
@@ -70,5 +70,5 @@ button {
 }
 
 .card {
-  @apply bg-white dark:bg-stone-700 rounded-lg shadow p-5;
+  @apply bg-white dark:bg-stone-700 sm:rounded-none md:rounded-lg shadow p-5;
 }
