@@ -5,34 +5,30 @@
 
 body {
   font-family: 'Quicksand', 'Nunito', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-
-  @apply
-    bg-orange-100
-    dark:bg-stone-900
-    dark:text-white;
+  @apply bg-orange-100 dark:bg-stone-900 dark:text-white;
 }
 
-.container {
-  @apply mx-auto md:px-5 ;
-}
+.container { @apply mx-auto md:px-5; }
 
 .nav-bar {
-  @apply w-screen bg-emerald-300 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-100;
+  @apply
+    w-screen
+    bg-emerald-300
+    dark:bg-emerald-900
+    text-emerald-800
+    dark:text-emerald-100;
 }
 
 button {
   @apply
-    px-4
-    py-2
+    px-4 py-2
     rounded-lg
     cursor-pointer
     hover:bg-white/30
-    active:bg-white/50
+    active:bg-white/50;
 }
 
-.icon-btn {
-  @apply flex items-center p-2;
-}
+.icon-btn { @apply flex items-center p-2; }
 
 .flat-btn-primary {
   @apply
@@ -42,18 +38,21 @@ button {
     hover:bg-orange-400
     active:bg-orange-500
     focus:outline-3
-    focus:outline-orange-300
+    focus:outline-orange-300;
 }
 
-// .stroked-btn-primary {
-//   @apply
-//     border
-//     border-orange-500
-//     text-orange-500
-//     hover:bg-orange-500
-//     hover:text-white
-//     active:bg-orange-600;
-// }
+.stroked-btn-primary {
+  @apply
+    border
+    border-orange-400
+    text-orange-400
+    hover:bg-orange-400
+    hover:text-white
+    dark:hover:text-stone-800
+    active:bg-orange-500
+    focus:outline-3
+    focus:outline-orange-300;
+}
 
 .form-control {
   @apply
@@ -69,6 +68,28 @@ button {
     focus:border-orange-300;
 }
 
+.form-error {
+  @apply
+    outline-2
+    outline-red-600
+    border-red-600
+    focus:outline-red-600
+    focus:border-red-600
+    dark:outline-red-400
+    dark:border-red-400
+    focus:dark:outline-red-400
+    focus:dark:border-red-400;
+}
+
+.form-error-hint {
+  @apply text-red-600 dark:text-red-400 block h-9 ms-2 font-medium text-sm;
+}
+
 .card {
   @apply bg-white dark:bg-stone-700 sm:rounded-none md:rounded-lg shadow p-5;
+}
+
+.material-icons-sm {
+  font-size: 16px!important;
+  font-weight: bold!important;
 }

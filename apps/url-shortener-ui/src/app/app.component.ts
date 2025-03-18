@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { HeaderComponent } from './shared/header.component';
-import { UrlShortenerComponent } from './pages/url-shortener.component';
+import { HeaderComponent } from './shared/header/header.component';
+import { UrlShortenerComponent } from './pages/url-shortener/url-shortener.component';
 
 @Component({
   imports: [RouterModule, HeaderComponent, UrlShortenerComponent],

@@ -22,40 +22,56 @@ namespace UrlShortenerApi.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("shorten")]
-    public async Task<IActionResult> ShortenUrl([FromBody] string originalUrl)
+    public async Task<IActionResult> ShortenUrl([FromBody] OriginalUrlRequestDto originalUrlDto)
     {
-      if (string.IsNullOrEmpty(originalUrl))
+      if (string.IsNullOrEmpty(originalUrlDto.OriginalUrl))
       {
         return BadRequest("URL cannot be empty");
       }
 
-      if (!IsValidUrl(originalUrl))
+      if (!IsValidUrl(originalUrlDto.OriginalUrl))
       {
         return BadRequest("URL is invalid");
       }
 
-      var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == originalUrl);
+      ShortUrlResponseDto shortUrlResponseDto;
+
+      var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == originalUrlDto.OriginalUrl);
       if (existingUrl != null)
       {
-          return Ok(existingUrl.ShortCode);
+        shortUrlResponseDto = new ShortUrlResponseDto()
+        {
+          OriginalUrl = existingUrl.OriginalUrl,
+          ShortCode = existingUrl.ShortCode,
+          CreatedAt = DateTime.UtcNow
+        };
+        return Ok(shortUrlResponseDto);
       }
 
       long urlCount = await _context.Urls.CountAsync() + 1;
       string shortCode = GenerateShortCode(urlCount);
+      DateTime createdAt = DateTime.UtcNow;
+
       ShortUrl shortUrl = new()
       {
-        OriginalUrl = originalUrl,
-        ShortCode = shortCode
+        OriginalUrl = originalUrlDto.OriginalUrl.Trim(),
+        ShortCode = shortCode,
+        CreatedAt = createdAt
       };
 
       _context.Urls.Add(shortUrl);
       await _context.SaveChangesAsync();
 
-      var shortUrlDto = new ShortUrlDto() { ShortCode = shortCode };
-
-      return Ok(shortUrlDto);
+      shortUrlResponseDto = new ShortUrlResponseDto()
+      {
+        OriginalUrl = originalUrlDto.OriginalUrl.Trim(),
+        ShortCode = shortCode,
+        CreatedAt = createdAt
+      };
+      return Ok(shortUrlResponseDto);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{shortCode}")]
     public async Task<IActionResult> RedirectToOriginalUrl(string shortCode)
@@ -69,11 +85,12 @@ namespace UrlShortenerApi.Controllers
       urlEntry.ClickCount++;
       await _context.SaveChangesAsync();
 
-      var originalUrlDto = new OriginalUrlDto() { OriginalUrl = urlEntry.OriginalUrl };
+      var originalUrlDto = new OriginalUrlRequestDto() { OriginalUrl = urlEntry.OriginalUrl };
 
       return Ok(originalUrlDto);
     }
 
+    #region utility methods
     // Generate Short Code using MD5 Hash of the counter
     private static string GenerateShortCode(long count)
     {
@@ -89,5 +106,6 @@ namespace UrlShortenerApi.Controllers
       string pattern = @"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/\S*)?$";
       return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
     }
+    #endregion
   }
 }
