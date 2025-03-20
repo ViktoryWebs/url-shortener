@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -22,30 +23,30 @@ namespace UrlShortenerApi.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("shorten")]
-    public async Task<IActionResult> ShortenUrl([FromBody] OriginalUrlRequestDto originalUrlDto)
+    public async Task<IActionResult> ShortenUrl([FromBody] ShortenUrlRequestDto shortenUrlRequestDto)
     {
-      if (string.IsNullOrEmpty(originalUrlDto.OriginalUrl))
+      if (string.IsNullOrEmpty(shortenUrlRequestDto.OriginalUrl))
       {
         return BadRequest("URL cannot be empty");
       }
 
-      if (!IsValidUrl(originalUrlDto.OriginalUrl))
+      if (!IsValidUrl(shortenUrlRequestDto.OriginalUrl))
       {
         return BadRequest("URL is invalid");
       }
 
-      ShortUrlResponseDto shortUrlResponseDto;
+      ShortenUrlResponseDto shortenUrlResponseDto;
 
-      var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == originalUrlDto.OriginalUrl);
+      var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == shortenUrlRequestDto.OriginalUrl);
       if (existingUrl != null)
       {
-        shortUrlResponseDto = new ShortUrlResponseDto()
+        shortenUrlResponseDto = new ShortenUrlResponseDto()
         {
           OriginalUrl = existingUrl.OriginalUrl,
           ShortCode = existingUrl.ShortCode,
           CreatedAt = DateTime.UtcNow
         };
-        return Ok(shortUrlResponseDto);
+        return Ok(shortenUrlResponseDto);
       }
 
       long urlCount = await _context.Urls.CountAsync() + 1;
@@ -54,7 +55,7 @@ namespace UrlShortenerApi.Controllers
 
       ShortUrl shortUrl = new()
       {
-        OriginalUrl = originalUrlDto.OriginalUrl.Trim(),
+        OriginalUrl = shortenUrlRequestDto.OriginalUrl.Trim(),
         ShortCode = shortCode,
         CreatedAt = createdAt
       };
@@ -62,13 +63,13 @@ namespace UrlShortenerApi.Controllers
       _context.Urls.Add(shortUrl);
       await _context.SaveChangesAsync();
 
-      shortUrlResponseDto = new ShortUrlResponseDto()
+      shortenUrlResponseDto = new ShortenUrlResponseDto()
       {
-        OriginalUrl = originalUrlDto.OriginalUrl.Trim(),
+        OriginalUrl = shortenUrlRequestDto.OriginalUrl.Trim(),
         ShortCode = shortCode,
         CreatedAt = createdAt
       };
-      return Ok(shortUrlResponseDto);
+      return Ok(shortenUrlResponseDto);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -85,9 +86,14 @@ namespace UrlShortenerApi.Controllers
       urlEntry.ClickCount++;
       await _context.SaveChangesAsync();
 
-      var originalUrlDto = new OriginalUrlRequestDto() { OriginalUrl = urlEntry.OriginalUrl };
+      var redirectUrlResponseDto = new RedirectUrlResponseDto()
+      {
+        OriginalUrl = urlEntry.OriginalUrl,
+        ShortCode = urlEntry.ShortCode,
+        CreatedAt = urlEntry.CreatedAt
+      };
 
-      return Ok(originalUrlDto);
+      return Ok(redirectUrlResponseDto);
     }
 
     #region utility methods
