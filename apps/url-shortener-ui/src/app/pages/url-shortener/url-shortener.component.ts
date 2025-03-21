@@ -3,7 +3,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 
 import { ShortenUrl } from '../../../models/shorten-url.model';
 import { ShortUrlResponse } from '../../../models/short-url-response.model';
@@ -22,6 +22,7 @@ export class UrlShortenerComponent {
   url: ShortenUrl = { originalUrl: '' };
 
   @ViewChild('shortenUrlForm', { static: false }) shortenUrlForm!: NgForm;
+  @ViewChild('shortUrl', { static: false }) shortUrl!: ElementRef;
 
   shortenUrl(): void {
     if (this.shortenUrlForm.invalid) return;
@@ -37,6 +38,6 @@ export class UrlShortenerComponent {
   copyShortUrlToClipboard(): void {
     if (this.shortUrlResponse?.shortCode === '') return;
 
-    this._clipboard.copy(`localhost:4200/${this.shortUrlResponse?.shortCode}`);
+    this._clipboard.copy(this.shortUrl.nativeElement.href);
   }
 }

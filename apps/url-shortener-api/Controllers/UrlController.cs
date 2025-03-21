@@ -37,17 +37,17 @@ namespace UrlShortenerApi.Controllers
 
       ShortenUrlResponseDto shortenUrlResponseDto;
 
-      var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == shortenUrlRequestDto.OriginalUrl);
-      if (existingUrl != null)
-      {
-        shortenUrlResponseDto = new ShortenUrlResponseDto()
-        {
-          OriginalUrl = existingUrl.OriginalUrl,
-          ShortCode = existingUrl.ShortCode,
-          CreatedAt = DateTime.UtcNow
-        };
-        return Ok(shortenUrlResponseDto);
-      }
+      //var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == shortenUrlRequestDto.OriginalUrl);
+      //if (existingUrl != null)
+      //{
+      //  shortenUrlResponseDto = new ShortenUrlResponseDto()
+      //  {
+      //    OriginalUrl = existingUrl.OriginalUrl,
+      //    ShortCode = existingUrl.ShortCode,
+      //    CreatedAt = existingUrl.CreatedAt
+      //  };
+      //  return Ok(shortenUrlResponseDto);
+      //}
 
       long urlCount = await _context.Urls.CountAsync() + 1;
       string shortCode = GenerateShortCode(urlCount);
