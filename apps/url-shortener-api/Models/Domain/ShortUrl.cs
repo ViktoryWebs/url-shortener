@@ -18,6 +18,9 @@ namespace UrlShortenerApi.Models.Domain
 
     public int ClickCount { get; set; } = 0;
 
+    [Required]
+    public Guid CreatedByUserId { get; set; } // User ID
+
     public DateTime CreatedAt { get; set; }
   }
 }

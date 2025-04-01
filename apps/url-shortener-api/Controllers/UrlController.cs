@@ -35,19 +35,13 @@ namespace UrlShortenerApi.Controllers
         return BadRequest("URL is invalid");
       }
 
-      ShortenUrlResponseDto shortenUrlResponseDto;
+      var userId = HttpContext.Items["SupabaseUserId"]?.ToString();
+      if (userId == null)
+      {
+        return Unauthorized("Invalid User");
+      }
 
-      //var existingUrl = await _context.Urls.FirstOrDefaultAsync(u => u.OriginalUrl == shortenUrlRequestDto.OriginalUrl);
-      //if (existingUrl != null)
-      //{
-      //  shortenUrlResponseDto = new ShortenUrlResponseDto()
-      //  {
-      //    OriginalUrl = existingUrl.OriginalUrl,
-      //    ShortCode = existingUrl.ShortCode,
-      //    CreatedAt = existingUrl.CreatedAt
-      //  };
-      //  return Ok(shortenUrlResponseDto);
-      //}
+      ShortenUrlResponseDto shortenUrlResponseDto;
 
       long urlCount = await _context.Urls.CountAsync() + 1;
       string shortCode = GenerateShortCode(urlCount);
@@ -97,21 +91,21 @@ namespace UrlShortenerApi.Controllers
     }
 
     #region utility methods
-    // Generate Short Code using MD5 Hash of the counter
-    private static string GenerateShortCode(long count)
-    {
-      byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(count.ToString());
-      byte[] hashBytes = MD5.HashData(inputBytes);
+      // Generate Short Code using MD5 Hash of the counter
+      private static string GenerateShortCode(long count)
+      {
+        byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(count.ToString());
+        byte[] hashBytes = MD5.HashData(inputBytes);
 
-      return Convert.ToHexString(hashBytes)[..7]; // Take first 7 chars
-    }
+        return Convert.ToHexString(hashBytes)[..7]; // Take first 7 chars
+      }
 
-    // URL Validation
-    private static bool IsValidUrl(string url)
-    {
-      string pattern = @"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/\S*)?$";
-      return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
-    }
+      // URL Validation
+      private static bool IsValidUrl(string url)
+      {
+        string pattern = @"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/\S*)?$";
+        return Regex.IsMatch(url, pattern, RegexOptions.IgnoreCase);
+      }
     #endregion
   }
 }

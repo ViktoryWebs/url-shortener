@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace UrlShortenerApi.Models.DTO
 {
   public class ShortenUrlResponseDto
